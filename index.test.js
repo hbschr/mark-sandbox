@@ -3,7 +3,7 @@ function escape(str) {
   return str.replace("&", "&amp;").replace(">", "&gt;");
 }
 
-function mark(haystack, needle) {
+function markReplace(haystack, needle) {
   return needle
     ? escape(haystack).replace(
         new RegExp(`(^|\\s)(${escape(needle)})`, "gi"),
@@ -11,6 +11,23 @@ function mark(haystack, needle) {
       )
     : escape(haystack);
 }
+
+function markSplit(haystack, needle) {
+  return needle
+    ? haystack
+        .split(new RegExp(`(^|\\s)(${needle})`, "gi"))
+        .reduce(
+          (acc, cur) =>
+            acc +
+            (cur.toLowerCase() === needle.toLowerCase()
+              ? `<mark>${escape(cur)}</mark>`
+              : escape(cur)),
+          ""
+        )
+    : escape(haystack);
+}
+
+const mark = markSplit;
 
 describe("`mark` viewhelper", () => {
   it("should work without needle and escape", () => {
